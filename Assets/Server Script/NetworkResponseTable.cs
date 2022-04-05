@@ -13,7 +13,7 @@ public class NetworkResponseTable
 		responseTable = new Dictionary<short, Type>();
 		add(Constants.SMSG_JOIN, "ResponseJoin");
 		add(Constants.SMSG_LEAVE, "ResponseLeave");
-		//add(Constants.SMSG_SETNAME, "ResponseSetName");
+		add(Constants.SMSG_SETNAME, "ResponseSetName");
 		//add(Constants.SMSG_READY, "ResponseReady");
 		//add(Constants.SMSG_MOVE, "ResponseMove");
 		//add(Constants.SMSG_INTERACT, "ResponseInteract");
