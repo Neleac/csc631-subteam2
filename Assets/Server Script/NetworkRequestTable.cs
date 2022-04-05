@@ -13,9 +13,9 @@ public class NetworkRequestTable
 		requestTable = new Dictionary<short, Type>();
 		add(Constants.CMSG_JOIN, "RequestJoin");
 		add(Constants.CMSG_LEAVE, "RequestLeave");
-		//add(Constants.CMSG_SETNAME, "RequestSetName");
+	    add(Constants.CMSG_SETNAME, "RequestSetName");
 		//add(Constants.CMSG_READY, "RequestReady");
-		//add(Constants.CMSG_MOVE, "RequestMove");
+		add(Constants.CMSG_MOVE, "RequestMove");
 		//add(Constants.CMSG_INTERACT, "RequestInteract");
 	}
 
