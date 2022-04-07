@@ -67,6 +67,20 @@ public class NetworkManager : MonoBehaviour
         return false;
     }
 
+	public bool SendAnimateRequest(bool isWalking, bool isCombo)
+    {
+		if (cManager && cManager.IsConnected())
+        {
+			RequestAnimate request = new RequestAnimate();
+			request.send(isWalking, isCombo);
+			cManager.send(request);
+			//print(isWalking, isCombo, request);
+			return true;
+		}
+
+		return false;
+    }
+
     //public bool SendReadyRequest()
     //{
     //	if (cManager && cManager.IsConnected())

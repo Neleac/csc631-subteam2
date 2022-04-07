@@ -8,7 +8,8 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
 	private GameObject joinButton;
-    private GameObject nameConfirmButton;
+    private GameObject startActionButton;
+    private GameObject userNameInput;
     //private GameObject rootMenuPanel;
     //private GameObject hotseatMenuPanel;
     //private GameObject networkMenuPanel;
@@ -16,8 +17,6 @@ public class MainMenu : MonoBehaviour
     //private GameObject messageBox;
     //private TMPro.TextMeshProUGUI messageBoxMsg;
 
-    private TMPro.TextMeshProUGUI playerName;
-    private TMPro.TextMeshProUGUI userInput;
     //private TMPro.TextMeshProUGUI player1Name;
     //private TMPro.TextMeshProUGUI player2Name;
     private GameObject playerInput;
@@ -42,20 +41,21 @@ public class MainMenu : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-		joinButton = GameObject.Find("JoinButton");
-        nameConfirmButton = GameObject.Find("NameConfirmButton");
-		//rootMenuPanel = GameObject.Find("Root Menu");
-		//hotseatMenuPanel = GameObject.Find("Hotseat Menu");
-		//networkMenuPanel = GameObject.Find("Network Menu");
+        joinButton = GameObject.Find("JoinButton");
+        userNameInput = GameObject.Find("NameInput");
+        startActionButton = GameObject.Find("StartActionButton");
+        //rootMenuPanel = GameObject.Find("Root Menu");
+        //hotseatMenuPanel = GameObject.Find("Hotseat Menu");
+        //networkMenuPanel = GameObject.Find("Network Menu");
 
-		//messageBox = GameObject.Find("Message Box");
-		//messageBoxMsg = messageBox.transform.Find("Message").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+        //messageBox = GameObject.Find("Message Box");
+        //messageBoxMsg = messageBox.transform.Find("Message").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
 
         //playerName = GameObject.Find("PlayerName").GetComponent<TMPro.TextMeshProUGUI>(); //TEST
         //player1Name = GameObject.Find("Player1Name").GetComponent<TMPro.TextMeshProUGUI>();
         //player2Name = GameObject.Find("Player2Name").GetComponent<TMPro.TextMeshProUGUI>();
-        playerInput = GameObject.Find("NameInput");
-       // userInput = GameObject.Find("NameInput").GetComponent<TextMeshProUGUI>().text;
+
+        // userInput = GameObject.Find("NameInput").GetComponent<TextMeshProUGUI>().text;
         //player1Input = GameObject.Find("NetPlayer1Input");
         //player2Input = GameObject.Find("NetPlayer2Input");
 
@@ -65,23 +65,28 @@ public class MainMenu : MonoBehaviour
 		msgQueue.AddCallback(Constants.SMSG_JOIN, OnResponseJoin);
 		msgQueue.AddCallback(Constants.SMSG_LEAVE, OnResponseLeave);
 		msgQueue.AddCallback(Constants.SMSG_SETNAME, OnResponseSetName);
-		//msgQueue.AddCallback(Constants.SMSG_READY, OnResponseReady);
+        //msgQueue.AddCallback(Constants.SMSG_READY, OnResponseReady);
 
-		//rootMenuPanel.SetActive(true);
-		//hotseatMenuPanel.SetActive(false);
-		//networkMenuPanel.SetActive(false);
-		//messageBox.SetActive(false);
-	}
+        joinButton.SetActive(true);
+        userNameInput.SetActive(false);
+        startActionButton.SetActive(false);
+        //messageBox.SetActive(false);
+    }
 
 
-	public void onJoinClick()
+    public void onJoinClick()
     {
 		Debug.Log("Send JoinReq");
 		bool connected = networkManager.SendJoinRequest();
 		if (!connected)
 		{
 			Debug.Log("Unable to connect to server.");
-		}
+		} else
+        {
+            joinButton.SetActive(true);
+            userNameInput.SetActive(true);
+            startActionButton.SetActive(false);
+        }
 	}
 
     //	#region RootMenu
@@ -179,7 +184,7 @@ public class MainMenu : MonoBehaviour
                 //opponentName.text = "Waiting for opponent";
             }
 
-            playerInput.SetActive(true);
+            //playerInput.SetActive(true);
             //    opponentName.gameObject.SetActive(true);
             //    playerName.gameObject.SetActive(false);
             //    opponentInput.SetActive(false);
@@ -230,6 +235,9 @@ public class MainMenu : MonoBehaviour
         //{
         //    p2Name = name;
         //}
+        joinButton.SetActive(true);
+        userNameInput.SetActive(true);
+        startActionButton.SetActive(true);
     }
 
     public void OnResponseSetName(ExtendedEventArgs eventArgs)
@@ -250,6 +258,26 @@ public class MainMenu : MonoBehaviour
             //    p2Name = args.name;
             //}
         }
+    }
+
+
+    public void onStartGameClick()
+    {
+        //animationStateControl animationControl = GameObject.Find("ybot@idle").GetComponent<animationStateControl>();
+        SceneManager.LoadScene("Server Scene");
+        // GameManager gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        //		if (p1Name.Length == 0)
+        //		{
+        //			p1Name = "Player 1";
+        //		}
+        //		if (p2Name.Length == 0)
+        //		{
+        //			p2Name = "Player 2";
+        //		}
+        //		Player player1 = new Player(1, p1Name, new Color(0.9f, 0.1f, 0.1f), Constants.USER_ID == 1);
+        //		Player player2 = new Player(2, p2Name, new Color(0.2f, 0.2f, 1.0f), Constants.USER_ID == 2);
+        //		gameManager.Init(player1, player2);
+        //		SceneManager.LoadScene("Game");
     }
 
     //	public void OnReadyClick()
