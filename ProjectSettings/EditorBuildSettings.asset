@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Server Scene/CubeScene.unity
+    path: Assets/Server Scene/StartScene.unity
     guid: 47b15a7c4bd544cba925eb7c6bdc74ee
   - enabled: 1
     path: Assets/Server Scene/Server Scene.unity

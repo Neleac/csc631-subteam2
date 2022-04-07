@@ -30,6 +30,7 @@ public class MainMenu : MonoBehaviour
 
     private NetworkManager networkManager;
     private MessageQueue msgQueue;
+    private PlayerManager playerManager;
 
     // private string pName = "";
     //private string p1Name = "Player 1";
@@ -60,11 +61,14 @@ public class MainMenu : MonoBehaviour
         //player2Input = GameObject.Find("NetPlayer2Input");
 
         networkManager = GameObject.Find("Network Manager").GetComponent<NetworkManager>();
-		msgQueue = networkManager.GetComponent<MessageQueue>();
+        playerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
+        
+        msgQueue = networkManager.GetComponent<MessageQueue>();
 
 		msgQueue.AddCallback(Constants.SMSG_JOIN, OnResponseJoin);
 		msgQueue.AddCallback(Constants.SMSG_LEAVE, OnResponseLeave);
 		msgQueue.AddCallback(Constants.SMSG_SETNAME, OnResponseSetName);
+
         //msgQueue.AddCallback(Constants.SMSG_READY, OnResponseReady);
 
         joinButton.SetActive(true);
@@ -145,6 +149,7 @@ public class MainMenu : MonoBehaviour
                 //playerInput = player1Input;
                 //opponentInput = player2Input;
                 Debug.Log("server respond: user 1");
+                playerManager.setPlayerNum(1);
             }
             else if (args.user_id == 2)
             {
@@ -153,6 +158,7 @@ public class MainMenu : MonoBehaviour
                 //playerInput = player2Input;
                 //opponentInput = player1Input;
                 Debug.Log("user 2");
+                playerManager.setPlayerNum(2);
             }
             else
             {

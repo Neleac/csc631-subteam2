@@ -5,58 +5,88 @@ using UnityEngine;
 public class animationStateControl : MonoBehaviour
 {
 
-
-    Animator animator;
+    private Animator animator1;
+    private Animator animator2;
     //better performance
     int ReadyHash;
 
     private bool isNetConnected;
     private NetworkManager networkManager;
+    private PlayerManager playerManager;
 
+    void Awake()
+    {
+        animator1 = GameObject.Find("ybot@Idle").GetComponent<Animator>();
+        animator2 = GameObject.Find("ybot@IdleTwo").GetComponent<Animator>();
+
+        ReadyHash = Animator.StringToHash("Ready");
+        animator1.SetBool(ReadyHash, false);
+        animator2.SetBool(ReadyHash, false);
+        animator1.SetBool("isCombo", false);
+        animator2.SetBool("isCombo", false);
+
+        networkManager = GameObject.Find("Network Manager").GetComponent<NetworkManager>();
+
+        GameObject.FindObjectOfType<PlayerManager>();
+        GameObject obj = GameObject.Find("Player Manager");
+        playerManager = obj.GetComponent<PlayerManager>();
+
+        MessageQueue msgQueue = networkManager.GetComponent<MessageQueue>();
+        msgQueue.AddCallback(Constants.SMSG_ANIMATE, OnResponseAnimate);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
-        ReadyHash = Animator.StringToHash("Ready");
-
-        networkManager = GameObject.Find("Network Manager").GetComponent<NetworkManager>();
-        MessageQueue msgQueue = networkManager.GetComponent<MessageQueue>();
-        msgQueue.AddCallback(Constants.SMSG_ANIMATE, OnResponseAnimate);
     }
 
     // Update is called once per frame
     void Update()
     {
-            processKeyboardControlAnimation();
-        
-    //    bool isFighting = animator.GetBool("isCombo");
-    //    bool Ready = animator.GetBool(ReadyHash);
-    //    bool forwardPressed = Input.GetKey("w");
-    //    bool fightPressed = Input.GetKey("f");
-    //    //Players input
-    //    if (!Ready && forwardPressed)
-    //    {
-    //        //boolean animation to be true
-    //        animator.SetBool(ReadyHash, true);
-    //    }
-    //    //player not pressing
-    //    if (Ready && !forwardPressed)
-    //    {
-    //        //boolean animation to be false
-    //        animator.SetBool(ReadyHash, false);
-    //    }
-    //    if (!isFighting && (forwardPressed && fightPressed)){
-    //        animator.SetBool("isCombo", true);
+        processKeyboardControlAnimation();
 
-        //    }
-        //    if (isFighting && (!forwardPressed || !fightPressed)) {
-        //        animator.SetBool("isCombo", false);
-        //    }
+        //bool isFighting = animator.GetBool("isCombo");
+        //bool Ready = animator.GetBool(ReadyHash);
+        //bool forwardPressed = Input.GetKey("w");
+        //bool fightPressed = Input.GetKey("f");
+        ////Players input
+        //if (!Ready && forwardPressed)
+        //{
+        //    //boolean animation to be true
+        //    animator.SetBool(ReadyHash, true);
+        //}
+        ////player not pressing
+        //if (Ready && !forwardPressed)
+        //{
+        //    //boolean animation to be false
+        //    animator.SetBool(ReadyHash, false);
+        //}
+        //if (!isFighting && (forwardPressed && fightPressed))
+        //{
+        //    animator.SetBool("isCombo", true);
+
+        //}
+        //if (isFighting && (!forwardPressed || !fightPressed))
+        //{
+        //    animator.SetBool("isCombo", false);
+        //}
     }
 
+    
     public void processKeyboardControlAnimation()
     {
+        if (playerManager == null)
+        {
+            return;
+        }
+        Animator animator;
+        if (playerManager.getPlayerNum() == 1)
+        {
+            animator = animator1;
+        } else {
+            animator = animator2;
+        }
+
         bool isFighting = animator.GetBool("isCombo");
         bool Ready = animator.GetBool(ReadyHash);
         bool forwardPressed = Input.GetKey("w");
@@ -85,6 +115,7 @@ public class animationStateControl : MonoBehaviour
         if (!isFighting && (forwardPressed && fightPressed))
         {
             // animator.SetBool("isCombo", true);
+            animatorReadyToWalk = true;
             animatorToCombo = true;
             sendRequest = true;
         }
@@ -101,15 +132,32 @@ public class animationStateControl : MonoBehaviour
         }
     }
 
-
     public void OnResponseAnimate(ExtendedEventArgs eventArgs)
     {
         ResponseAnimateEventArgs args = eventArgs as ResponseAnimateEventArgs;
         bool isWalking = args.isWalking;
         bool isCombo = args.isCombo;
 
-        animator.SetBool(ReadyHash, isWalking);
-        animator.SetBool("isCombo", isCombo);
+        Animator animator;
+        if (args.user_id == 1)
+        {
+            animator = animator1;
+        }
+        else
+        {
+            animator = animator2;
+        }
+
+
+        if (animator.GetBool(ReadyHash) != isWalking)
+        {
+            animator.SetBool(ReadyHash, isWalking);
+        }
+
+        if (animator.GetBool("isCombo") != isCombo)
+        {
+            animator.SetBool("isCombo", isCombo);
+        }
 
         //if (args.user_id == Constants.OP_ID)
         //{
