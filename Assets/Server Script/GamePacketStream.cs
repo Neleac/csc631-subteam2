@@ -37,6 +37,11 @@ public class GamePacketStream
 		add(BitConverter.GetBytes(val));
 	}
 
+	public void add(float val)
+	{
+		add(BitConverter.GetBytes(val));
+	}
+
 	public void add(bool val)
 	{
 		add(BitConverter.GetBytes(val));

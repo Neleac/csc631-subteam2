@@ -81,6 +81,20 @@ public class NetworkManager : MonoBehaviour
 		return false;
     }
 
+	public bool SendTransformRequest(float x, float y, float z)
+	{
+		if (cManager && cManager.IsConnected())
+        {
+			RequestTransform request = new RequestTransform();
+			request.send(x, y, z);
+			cManager.send(request);
+
+			return true;
+		}
+
+		return false;
+	}
+
     //public bool SendReadyRequest()
     //{
     //	if (cManager && cManager.IsConnected())

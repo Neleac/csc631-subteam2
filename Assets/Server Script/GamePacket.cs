@@ -23,6 +23,11 @@ public class GamePacket
 		buffer.add(val);
 	}
 
+	public void addFloat32(float val)
+	{
+		buffer.add(val);
+	}
+
 	public void addBool(bool val)
 	{
 		buffer.add(val);
@@ -37,10 +42,6 @@ public class GamePacket
 	{
 		buffer.add((short)val.Length);
 		buffer.add(val);
-	}
-
-	public void addFloat32(float val)
-	{
 	}
 
 	public int size()

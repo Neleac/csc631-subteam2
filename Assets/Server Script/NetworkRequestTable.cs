@@ -14,9 +14,12 @@ public class NetworkRequestTable
 		add(Constants.CMSG_JOIN, "RequestJoin");
 		add(Constants.CMSG_LEAVE, "RequestLeave");
 	    add(Constants.CMSG_SETNAME, "RequestSetName");
+		add(Constants.CMSG_ANIMATE, "RequestAnimate");
 		//add(Constants.CMSG_READY, "RequestReady");
-		add(Constants.CMSG_MOVE, "RequestMove");
+		//add(Constants.CMSG_MOVE, "RequestMove");
 		//add(Constants.CMSG_INTERACT, "RequestInteract");
+
+		add(Constants.CMSG_TRANSFORM, "RequestTransform");
 	}
 
 	public static void add(short request_id, string name)

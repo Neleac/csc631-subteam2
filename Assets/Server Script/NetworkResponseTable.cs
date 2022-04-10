@@ -18,6 +18,8 @@ public class NetworkResponseTable
 		//add(Constants.SMSG_READY, "ResponseReady");
 		//add(Constants.SMSG_MOVE, "ResponseMove");
 		//add(Constants.SMSG_INTERACT, "ResponseInteract");
+
+		add(Constants.SMSG_TRANSFORM, "ResponseTransform");
 	}
 
 	public static void add(short response_id, string name)
