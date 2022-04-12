@@ -45,34 +45,60 @@ public class animationStateControl : MonoBehaviour
     void Update()
         {
         processKeyboardControlAnimation();
+        move();
 
-        //bool isFighting = animator.GetBool("isCombo");
-        //bool Ready = animator.GetBool(ReadyHash);
-        //bool forwardPressed = Input.GetKey("w");
-        //bool fightPressed = Input.GetKey("f");
-        ////Players input
-        //if (!Ready && forwardPressed)
-        //{
-        //    //boolean animation to be true
-        //    animator.SetBool(ReadyHash, true);
-        //}
-        ////player not pressing
-        //if (Ready && !forwardPressed)
-        //{
-        //    //boolean animation to be false
-        //    animator.SetBool(ReadyHash, false);
-        //}
-        //if (!isFighting && (forwardPressed && fightPressed))
-        //{
-        //    animator.SetBool("isCombo", true);
 
-        //}
-        //if (isFighting && (!forwardPressed || !fightPressed))
-        //{
-        //    animator.SetBool("isCombo", false);
-        //}
         }
 
+    public void move()
+    {
+
+        if (playerManager == null)
+        {
+            return;
+        }
+        Animator animator;
+       
+        if (playerManager.getPlayerNum() == 1)
+        {
+            animator = animator1;
+        }
+        else
+        {
+            animator = animator2;
+        }
+
+        Vector3 pos = animator.transform.position * 10;
+
+        if (Input.GetKey("w"))
+        {
+            //animator.transform.position += Vector3.forward * 0.05f;
+            pos += Vector3.forward * 10f;
+        }
+        else if (Input.GetKey("a"))
+        {
+            //animator.transform.position -= Vector3.right * 0.05f;
+            pos -= Vector3.right * 10f;
+        }
+        else if (Input.GetKey("s"))
+        {
+            //animator.transform.position -= Vector3.forward * 0.05f;
+            pos -= Vector3.forward * 10f;
+        }
+        else if (Input.GetKey("d"))
+        {
+            //animator.transform.position += Vector3.right * 0.05f;
+            pos += Vector3.right * 10f;
+        }
+
+        if(Input.GetKey("w") || Input.GetKey("a") || Input.GetKey("s") || Input.GetKey("d"))
+        {
+            Debug.Log(pos);
+            networkManager.SendMoveRequest(pos.x, pos.y, pos.z);
+        }
+        
+        
+    }
 
     public void processKeyboardControlAnimation()
         {
@@ -100,28 +126,6 @@ public class animationStateControl : MonoBehaviour
 
         bool sendRequest = false;
         //Players input
-        if (animator1 || animator2)
-            {
-            if (Input.GetKey("w"))
-                {
-                transform.position += Vector3.forward * 0.05f;
-                sendRequest = true;
-                }
-            else if (Input.GetKey("a"))
-                {
-                transform.position -= Vector3.right * 0.05f;
-                sendRequest = true;
-                }
-            else if (Input.GetKey("s"))
-                {
-                transform.position -= Vector3.forward * 0.05f;
-                sendRequest = true;
-                }
-            else if (Input.GetKey("d"))
-                {
-                transform.position += Vector3.right * 0.05f;
-                sendRequest = true;
-                }
             if (!Ready && forwardPressed)
                 {
                 //boolean animation to be true
@@ -154,19 +158,34 @@ public class animationStateControl : MonoBehaviour
             if (sendRequest)
                 {
                 networkManager.SendAnimateRequest(animatorReadyToWalk, animatorToCombo);
-                networkManager.SendMoveRequest(transform.position);
                 }
             }
-        }
-        public void OnResponseMove(ExtendedEventArgs eventArgs)
-        {
+
+
+    public void OnResponseMove(ExtendedEventArgs eventArgs)
+    {
         ResponseMoveEventArgs args = eventArgs as ResponseMoveEventArgs;
-        System.Diagnostics.Debug.WriteLine("This is a log");
-        int z = args.z;
-        int x = args.x;
-        int y = args.y;
-        
+
+        Animator animator;
+        if (args.user_id == 1)
+        {
+            animator = animator1;
         }
+        else
+        {
+            animator = animator2;
+        }
+
+        float x = args.x / 10;
+        float y = args.y / 10;
+        float z = args.z / 10;
+        Debug.Log("move: " + new Vector3(x, y, z));
+
+
+        animator.transform.position = new Vector3(x, y, z);
+    }
+
+
     public void OnResponseAnimate(ExtendedEventArgs eventArgs)
             {
             ResponseAnimateEventArgs args = eventArgs as ResponseAnimateEventArgs;
@@ -213,6 +232,6 @@ public class animationStateControl : MonoBehaviour
             //    Debug.Log("ERROR: Invalid user_id in ResponseReady: " + args.user_id);
             //}
             }
-        }
+}
 
 
