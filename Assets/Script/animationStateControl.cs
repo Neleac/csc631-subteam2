@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class animationStateControl : MonoBehaviour
-{
+    {
 
     private Animator animator1;
     private Animator animator2;
@@ -15,7 +15,7 @@ public class animationStateControl : MonoBehaviour
     private PlayerManager playerManager;
 
     void Awake()
-    {
+        {
         animator1 = GameObject.Find("ybot@Idle").GetComponent<Animator>();
         animator2 = GameObject.Find("ybot@IdleTwo").GetComponent<Animator>();
 
@@ -33,16 +33,17 @@ public class animationStateControl : MonoBehaviour
 
         MessageQueue msgQueue = networkManager.GetComponent<MessageQueue>();
         msgQueue.AddCallback(Constants.SMSG_ANIMATE, OnResponseAnimate);
-    }
+        msgQueue.AddCallback(Constants.SMSG_MOVE, OnResponseMove);
+        }
 
     // Start is called before the first frame update
     void Start()
-    {
-    }
+        {
+        }
 
     // Update is called once per frame
     void Update()
-    {
+        {
         processKeyboardControlAnimation();
 
         //bool isFighting = animator.GetBool("isCombo");
@@ -70,22 +71,24 @@ public class animationStateControl : MonoBehaviour
         //{
         //    animator.SetBool("isCombo", false);
         //}
-    }
-
-    
-    public void processKeyboardControlAnimation()
-    {
-        if (playerManager == null)
-        {
-            return;
         }
+
+
+    public void processKeyboardControlAnimation()
+        {
+        if (playerManager == null)
+            {
+            return;
+            }
         Animator animator;
         if (playerManager.getPlayerNum() == 1)
-        {
+            {
             animator = animator1;
-        } else {
+            }
+        else
+            {
             animator = animator2;
-        }
+            }
 
         bool isFighting = animator.GetBool("isCombo");
         bool Ready = animator.GetBool(ReadyHash);
@@ -102,18 +105,22 @@ public class animationStateControl : MonoBehaviour
             if (Input.GetKey("w"))
                 {
                 transform.position += Vector3.forward * 0.05f;
+                sendRequest = true;
                 }
             else if (Input.GetKey("a"))
                 {
                 transform.position -= Vector3.right * 0.05f;
+                sendRequest = true;
                 }
             else if (Input.GetKey("s"))
                 {
                 transform.position -= Vector3.forward * 0.05f;
+                sendRequest = true;
                 }
             else if (Input.GetKey("d"))
                 {
                 transform.position += Vector3.right * 0.05f;
+                sendRequest = true;
                 }
             if (!Ready && forwardPressed)
                 {
@@ -147,56 +154,65 @@ public class animationStateControl : MonoBehaviour
             if (sendRequest)
                 {
                 networkManager.SendAnimateRequest(animatorReadyToWalk, animatorToCombo);
+                networkManager.SendMoveRequest(transform.position);
                 }
             }
-    }
-
+        }
+        public void OnResponseMove(ExtendedEventArgs eventArgs)
+        {
+        ResponseMoveEventArgs args = eventArgs as ResponseMoveEventArgs;
+        System.Diagnostics.Debug.WriteLine("This is a log");
+        int z = args.z;
+        int x = args.x;
+        int y = args.y;
+        
+        }
     public void OnResponseAnimate(ExtendedEventArgs eventArgs)
-    {
-        ResponseAnimateEventArgs args = eventArgs as ResponseAnimateEventArgs;
-        bool isWalking = args.isWalking;
-        bool isCombo = args.isCombo;
+            {
+            ResponseAnimateEventArgs args = eventArgs as ResponseAnimateEventArgs;
+            bool isWalking = args.isWalking;
+            bool isCombo = args.isCombo;
 
-        Animator animator;
-        if (args.user_id == 1)
-        {
-            animator = animator1;
+            Animator animator;
+            if (args.user_id == 1)
+                {
+                animator = animator1; 
+                }
+            else
+                {
+                animator = animator2;
+                }
+
+
+            if (animator.GetBool(ReadyHash) != isWalking)
+                {
+                animator.SetBool(ReadyHash, isWalking);
+                }
+
+            if (animator.GetBool("isCombo") != isCombo)
+                {
+                animator.SetBool("isCombo", isCombo);
+                }
+
+            //if (args.user_id == Constants.OP_ID)
+            //{
+            //    int pieceIndex = args.piece_idx;
+            //    int x = args.x;
+            //    int y = args.y;
+            //    Hero hero = Players[args.user_id - 1].Heroes[pieceIndex];
+            //    gameBoard[hero.x, hero.y] = null;
+            //    hero.Move(x, y);
+            //    gameBoard[x, y] = hero;
+            //}
+            //else if (args.user_id == Constants.USER_ID)
+            //{
+            //    // Ignore
+            //}
+            //else
+            //{
+            //    Debug.Log("ERROR: Invalid user_id in ResponseReady: " + args.user_id);
+            //}
+            }
         }
-        else
-        {
-            animator = animator2;
-        }
-
-
-        if (animator.GetBool(ReadyHash) != isWalking)
-        {
-            animator.SetBool(ReadyHash, isWalking);
-        }
-
-        if (animator.GetBool("isCombo") != isCombo)
-        {
-            animator.SetBool("isCombo", isCombo);
-        }
-
-        //if (args.user_id == Constants.OP_ID)
-        //{
-        //    int pieceIndex = args.piece_idx;
-        //    int x = args.x;
-        //    int y = args.y;
-        //    Hero hero = Players[args.user_id - 1].Heroes[pieceIndex];
-        //    gameBoard[hero.x, hero.y] = null;
-        //    hero.Move(x, y);
-        //    gameBoard[x, y] = hero;
-        //}
-        //else if (args.user_id == Constants.USER_ID)
-        //{
-        //    // Ignore
-        //}
-        //else
-        //{
-        //    Debug.Log("ERROR: Invalid user_id in ResponseReady: " + args.user_id);
-        //}
-    }
-}
 
 

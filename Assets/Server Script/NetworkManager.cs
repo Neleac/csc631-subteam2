@@ -93,17 +93,17 @@ public class NetworkManager : MonoBehaviour
     //	return false;
     //}
 
-    //public bool SendMoveRequest(int pieceIndex, int x, int y)
-    //{
-    //	if (cManager && cManager.IsConnected())
-    //	{
-    //		RequestMove request = new RequestMove();
-    //		request.send(pieceIndex, x, y);
-    //		cManager.send(request);
-    //		return true;
-    //	}
-    //	return false;
-    //}
+    public bool SendMoveRequest(int z, int x, int y)
+    {
+    	if (cManager && cManager.IsConnected())
+    	{
+    		RequestMove request = new RequestMove();
+    		request.send(z, x, y);
+    		cManager.send(request);
+    		return true;
+    	}
+    	return false;
+    }
 
     //public bool SendInteractRequest(int pieceIndex, int targetIndex)
     //{
