@@ -89,7 +89,7 @@ public class animationStateControl : MonoBehaviour
 
         bool isFighting = animator.GetBool("isCombo");
         bool Ready = animator.GetBool(ReadyHash);
-        bool forwardPressed = Input.GetKey("w");
+        bool forwardPressed = Input.GetKey("space");
         bool fightPressed = Input.GetKey("f");
         bool animatorReadyToWalk = false;
         bool animatorToCombo = false;
@@ -97,39 +97,58 @@ public class animationStateControl : MonoBehaviour
 
         bool sendRequest = false;
         //Players input
-        if (!Ready && forwardPressed)
-        {
-            //boolean animation to be true
-            //animator.SetBool(ReadyHash, true);
-            animatorReadyToWalk = true;
-            sendRequest = true;
-        }
-        //player not pressing
-        if (Ready && !forwardPressed)
-        {
-            //boolean animation to be false
-            //animator.SetBool(ReadyHash, false);
-            animatorReadyToWalk = false;
-            sendRequest = true;
-        }
-        if (!isFighting && (forwardPressed && fightPressed))
-        {
-            // animator.SetBool("isCombo", true);
-            animatorReadyToWalk = true;
-            animatorToCombo = true;
-            sendRequest = true;
-        }
-        if (isFighting && (!forwardPressed || !fightPressed))
-        {
-            //animator.SetBool("isCombo", false);
-            animatorToCombo = false;
-            sendRequest = true;
-        }
+        if (animator1 || animator2)
+            {
+            if (Input.GetKey("w"))
+                {
+                transform.position += Vector3.forward * 0.05f;
+                }
+            else if (Input.GetKey("a"))
+                {
+                transform.position -= Vector3.right * 0.05f;
+                }
+            else if (Input.GetKey("s"))
+                {
+                transform.position -= Vector3.forward * 0.05f;
+                }
+            else if (Input.GetKey("d"))
+                {
+                transform.position += Vector3.right * 0.05f;
+                }
+            if (!Ready && forwardPressed)
+                {
+                //boolean animation to be true
+                //animator.SetBool(ReadyHash, true);
+                animatorReadyToWalk = true;
+                sendRequest = true;
+                }
+            //player not pressing
+            if (Ready && !forwardPressed)
+                {
+                //boolean animation to be false
+                //animator.SetBool(ReadyHash, false);
+                animatorReadyToWalk = false;
+                sendRequest = true;
+                }
+            if (!isFighting && (forwardPressed && fightPressed))
+                {
+                // animator.SetBool("isCombo", true);
+                animatorReadyToWalk = true;
+                animatorToCombo = true;
+                sendRequest = true;
+                }
+            if (isFighting && (!forwardPressed || !fightPressed))
+                {
+                //animator.SetBool("isCombo", false);
+                animatorToCombo = false;
+                sendRequest = true;
+                }
 
-        if (sendRequest)
-        {
-            networkManager.SendAnimateRequest(animatorReadyToWalk, animatorToCombo);
-        }
+            if (sendRequest)
+                {
+                networkManager.SendAnimateRequest(animatorReadyToWalk, animatorToCombo);
+                }
+            }
     }
 
     public void OnResponseAnimate(ExtendedEventArgs eventArgs)
